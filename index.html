@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTD — Focus</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0a0a0a" id="themeColor">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GTD Focus">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230a0a0a' width='512' height='512' rx='100'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='300' font-family='sans-serif' fill='white'>🎯</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ========== THEME: Midnight (Default) ========== */
+        [data-theme="midnight"] {
+            --bg: #0a0a0a;
+            --bg-gradient: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+            --surface: #141414;
+            --surface-2: #1a1a1a;
+            --text: #ffffff;
+            --text-dim: #666666;
+            --text-muted: #444444;
+            --border: #222222;
+            --accent: #ffffff;
+            --accent-rgb: 255, 255, 255;
+            --primary: #00f0ff;
+            --primary-rgb: 0, 240, 255;
+            --glow: rgba(0, 240, 255, 0.3);
+            --icon-set: 'geometric';
+        }
+
+        /* ========== THEME: Dawn (Light) - Optimized ========== */
+        [data-theme="dawn"] {
+            --bg: #f8f9fa;
+            --bg-gradient: linear-gradient(180deg, #ffffff 0%, #e9ecef 100%);
+            --surface: #ffffff;
+            --surface-2: #f1f3f5;
+            --text: #212529;
+            --text-dim: #495057;
+            --text-muted: #868e96;
+            --border: #dee2e6;
+            --accent: #228be6;
+            --accent-rgb: 34, 139, 230;
+            --primary: #1971c2;
+            --primary-rgb: 25, 113, 194;
+            --glow: rgba(34, 139, 230, 0.2);
+            --icon-set: 'rounded';
+        }
+
+        /* ========== THEME: Forest (Nature) ========== */
+        [data-theme="forest"] {
+            --bg: #0d1117;
+            --bg-gradient: linear-gradient(180deg, #0d1117 0%, #0a0f0d 100%);
+            --surface: #161b22;
+            --surface-2: #21262d;
+            --text: #e6edf3;
+            --text-dim: #7d8590;
+            --text-muted: #484f58;
+            --border: #30363d;
+            --accent: #3fb950;
+            --accent-rgb: 63, 185, 80;
+            --primary: #3fb950;
+            --primary-rgb: 63, 185, 80;
+            --glow: rgba(63, 185, 80, 0.3);
+            --icon-set: 'organic';
+        }
+
+        /* ========== THEME: Sunset (Warm) ========== */
+        [data-theme="sunset"] {
+            --bg: #1a0f0a;
+            --bg-gradient: linear-gradient(180deg, #1a0f0a 0%, #0f0a05 100%);
+            --surface: #2d1810;
+            --surface-2: #3d1f14;
+            --text: #ffe4d6;
+            --text-dim: #b8968c;
+            --text-muted: #7d5a50;
+            --border: #4a2f1f;
+            --accent: #ff8c42;
+            --accent-rgb: 255, 140, 66;
+            --primary: #ff6b35;
+            --primary-rgb: 255, 107, 53;
+            --glow: rgba(255, 107, 53, 0.3);
+            --icon-set: 'soft';
+        }
+
+        /* ========== THEME: Minimal (Ultra Clean) ========== */
+        [data-theme="minimal"] {
+            --bg: #ffffff;
+            --bg-gradient: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
+            --surface: #ffffff;
+            --surface-2: #fafafa;
+            --text: #000000;
+            --text-dim: #424242;
+            --text-muted: #757575;
+            --border: #e0e0e0;
+            --accent: #000000;
+            --accent-rgb: 0, 0, 0;
+            --primary: #424242;
+            --primary-rgb: 66, 66, 66;
+            --glow: rgba(0, 0, 0, 0.08);
+            --icon-set: 'geometric';
+        }
+
+        body {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            background: var(--bg);
+            background: var(--bg-gradient);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 13px;
+            min-height: 100vh;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(var(--accent-rgb), 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--accent-rgb), 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .app {
+            max-width: 1100px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .logo {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--text), var(--text-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            position: relative;
+            margin-right: 8px;
+        }
+
+        .theme-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .theme-btn:hover {
+            border-color: var(--text-dim);
+            color: var(--text);
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px;
+            min-width: 180px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Light themes dropdown shadow */
+        [data-theme="dawn"] .theme-dropdown,
+        [data-theme="minimal"] .theme-dropdown {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .theme-option-label {
+            font-size: 12px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* Ensure text visibility in light themes */
+        [data-theme="dawn"] .theme-btn,
+        [data-theme="minimal"] .theme-btn {
+            color: var(--text-dim);
+            border-color: var(--border);
+        }
+
+        [data-theme="dawn"] .theme-btn:hover,
+        [data-theme="minimal"] .theme-btn:hover {
+            color: var(--text);
+            border-color: var(--text);
+        }
+
+        .theme-dropdown.show { display: block; }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .theme-option:last-child { margin-bottom: 0; }
+        .theme-option:hover { background: var(--surface-2); }
+        .theme-option.active { background: rgba(var(--accent-rgb), 0.15); }
+
+        .theme-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .theme-option-label {
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        .lang-switch { display: flex; gap: 4px; margin-right: 8px; }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover { border-color: var(--text-dim); color: var(--text); }
+        .lang-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-text:hover { color: var(--text); background: rgba(var(--accent-rgb), 0.08); }
+
+        /* Quick Add */
+        .quick-add {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            transition: border-color 0.3s ease;
+        }
+
+        .quick-add-form { display: flex; gap: 12px; align-items: center; }
+
+        .quick-add-input {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .quick-add-input::placeholder { color: var(--text-muted); }
+        .quick-add-input:focus { outline: none; border-color: var(--accent); }
+
+        .btn-add {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Layout */
+        .layout { display: flex; flex: 1; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 200px;
+            padding: 24px 16px;
+            border-right: 1px solid var(--border);
+            flex-shrink: 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .nav-group { margin-bottom: 28px; }
+
+        .nav-group-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 10px;
+            padding-left: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            margin: 4px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .nav-item:hover { color: var(--text); background: rgba(var(--accent-rgb), 0.08); }
+        .nav-item.active { color: var(--text); background: rgba(var(--accent-rgb), 0.12); }
+
+        .nav-item-left { display: flex; align-items: center; gap: 10px; }
+        .nav-icon { width: 20px; text-align: center; font-size: 14px; }
+
+        .nav-count {
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--surface-2);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .nav-item.active .nav-count { background: var(--accent); color: var(--bg); }
+
+        /* Main */
+        .main { flex: 1; padding: 24px; }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .content-title-group { display: flex; flex-direction: column; gap: 4px; }
+
+        .content-title {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        .content-subtitle { font-size: 12px; color: var(--text-dim); }
+
+        .view-toggle { display: flex; gap: 8px; }
+
+        .toggle-btn {
+            padding: 8px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 11px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover { border-color: var(--text-dim); color: var(--text); }
+        .toggle-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+        /* Filter Bar */
+        .filter-bar { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+
+        .search-input {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            min-width: 200px;
+            transition: all 0.2s;
+        }
+
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-input:focus { outline: none; border-color: var(--accent); }
+
+        .filter-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 10px 14px;
+            font-family: inherit;
+            font-size: 11px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover { border-color: var(--text-dim); color: var(--text); }
+        .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+
+        /* Task List */
+        .task-list { display: flex; flex-direction: column; gap: 1px; }
+
+        .task-item {
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-item:hover { border-color: var(--text-dim); transform: translateX(4px); }
+        .task-item.completed .task-title { text-decoration: line-through; color: var(--text-dim); }
+
+        .task-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+
+        .task-check {
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--text-dim);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .task-check:hover { border-color: var(--accent); }
+        .task-check.checked { background: var(--accent); border-color: var(--accent); }
+        .task-check.checked::after { content: '✓'; color: var(--bg); font-size: 11px; font-weight: 700; }
+
+        .task-title { flex: 1; font-size: 13px; line-height: 1.5; }
+        .task-desc { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; padding-left: 30px; }
+
+        .task-meta { display: flex; gap: 8px; flex-wrap: wrap; padding-left: 30px; }
+
+        .tag {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            padding: 3px 8px;
+            background: var(--surface-2);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-left: 30px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.2s;
+        }
+
+        .task-item:hover .task-actions { opacity: 1; transform: translateY(0); }
+
+        .action-btn {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 10px;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .action-btn.danger:hover { border-color: #ff4444; color: #ff4444; }
+
+        /* Empty State */
+        .empty { text-align: center; padding: 80px 20px; color: var(--text-dim); }
+        .empty-symbol { font-size: 32px; margin-bottom: 16px; opacity: 0.3; }
+        .empty-text { font-size: 12px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--surface);
+            width: 90%;
+            max-width: 480px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .modal-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 18px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover { color: var(--text); background: rgba(var(--accent-rgb), 0.1); }
+
+        .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+
+        .field { margin-bottom: 18px; }
+
+        .field-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .field-input {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .field-input:focus { outline: none; border-color: var(--accent); }
+        textarea.field-input { resize: vertical; min-height: 80px; }
+
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface-2);
+            min-height: 46px;
+        }
+
+        .tags-input-container:focus-within { border-color: var(--accent); }
+
+        .tag-item {
+            background: var(--accent);
+            color: var(--bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tag-item button {
+            background: none;
+            border: none;
+            color: var(--bg);
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            opacity: 0.7;
+            padding: 0;
+        }
+
+        .tag-item button:hover { opacity: 1; }
+
+        .tags-input-container input {
+            border: none;
+            flex: 1;
+            min-width: 80px;
+            background: transparent;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .tags-input-container input:focus { outline: none; }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            background: rgba(var(--accent-rgb), 0.02);
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-family: inherit;
+            font-size: 11px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); }
+        .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+        .btn-primary { background: var(--accent); border: none; color: var(--bg); font-weight: 700; }
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* Tags Page */
+        .tags-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .tag-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+        .tag-card-count {
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--surface-2);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 14px 28px;
+            border-radius: 10px;
+            z-index: 2000;
+            transition: transform 0.3s;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast-text { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* Responsive - Tablet & Mobile */
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            
+            /* Sidebar - Horizontal scroll */
+            .sidebar { 
+                width: 100%; 
+                padding: 12px; 
+                border-right: none; 
+                border-bottom: 1px solid var(--border);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-group { display: flex; gap: 12px; overflow-x: auto; margin-bottom: 0; padding-bottom: 4px; }
+            .nav-group-label { display: none; }
+            .nav-item { 
+                white-space: nowrap; 
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .nav-icon { font-size: 16px; }
+            
+            /* Main content */
+            .main { padding: 16px; }
+            .content-title { font-size: 12px; }
+            .content-subtitle { font-size: 11px; }
+            
+            /* Quick add */
+            .quick-add { padding: 16px; }
+            .quick-add-form { gap: 8px; }
+            .quick-add-input { font-size: 13px; padding: 10px 12px; }
+            .btn-add { padding: 10px 16px; font-size: 11px; }
+            
+            /* Filter bar */
+            .filter-bar { gap: 6px; }
+            .search-input { min-width: 140px; font-size: 11px; padding: 8px 10px; }
+            .filter-btn { font-size: 10px; padding: 6px 10px; }
+            
+            /* Task cards */
+            .task-item { padding: 12px; }
+            .task-title { font-size: 12px; }
+            .task-desc { font-size: 11px; }
+            .task-meta { font-size: 10px; }
+            .task-actions { opacity: 1; transform: translateY(0); }
+            .action-btn { font-size: 9px; padding: 4px 8px; }
+            
+            /* Header */
+            .header { padding: 12px 16px; }
+            .logo { font-size: 13px; }
+            .header-actions { gap: 4px; }
+            .btn-text { padding: 6px 8px; font-size: 9px; }
+            .lang-switch { margin-right: 4px; }
+            .theme-btn { font-size: 9px; padding: 4px 8px; }
+            
+            /* Modals */
+            .modal { max-width: 95%; margin: 10px; }
+            .modal-body { max-height: 70vh; padding: 16px; }
+            .modal-header { padding: 16px; }
+            .modal-title { font-size: 12px; }
+            .field-label { font-size: 9px; }
+            .field-input { font-size: 12px; padding: 10px; }
+            .btn { padding: 8px 16px; font-size: 10px; }
+            
+            /* Toast */
+            .toast { min-width: 200px; padding: 12px 16px; }
+            .toast-text { font-size: 10px; }
+        }
+
+        /* Mobile - Extra Small */
+        @media (max-width: 480px) {
+            .header { padding: 10px 12px; }
+            .logo { font-size: 12px; }
+            .quick-add { padding: 12px; }
+            .btn-text span { display: none; }
+            .theme-btn span { display: none; }
+            
+            .sidebar { padding: 8px; }
+            .nav-item { padding: 6px 10px; font-size: 11px; }
+            
+            .main { padding: 12px; }
+            .content-title { font-size: 11px; }
+            .content-subtitle { font-size: 10px; }
+            
+            .quick-add-input { font-size: 12px; }
+            .btn-add { padding: 10px 14px; }
+            
+            .search-input { min-width: 100%; }
+            .filter-bar { flex-direction: column; }
+            .filter-btn { width: 100%; text-align: left; }
+            
+            .task-title { font-size: 11px; }
+            .task-desc { font-size: 10px; }
+            .task-meta { gap: 4px; }
+            .tag { font-size: 9px; padding: 2px 6px; }
+            
+            .modal { max-width: 100%; margin: 0; border-radius: 0; }
+            .modal-body { padding: 12px; }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn, .btn-text, .filter-btn, .action-btn {
+                min-height: 44px;
+            }
+            .nav-item {
+                min-height: 44px;
+            }
+            .task-check {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body data-theme="midnight">
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">GTD — Focus</div>
+            <div class="header-actions">
+                <div class="theme-selector">
+                    <button class="theme-btn" onclick="toggleThemeDropdown()">
+                        <span>🎨</span> Theme
+                    </button>
+                    <div class="theme-dropdown" id="themeDropdown">
+                        <div class="theme-option" data-theme="midnight" onclick="setTheme('midnight')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #0a0a0a, #00f0ff);"></div>
+                            <span class="theme-option-label">Midnight</span>
+                        </div>
+                        <div class="theme-option" data-theme="dawn" onclick="setTheme('dawn')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #ffffff, #0066ff);"></div>
+                            <span class="theme-option-label">Dawn</span>
+                        </div>
+                        <div class="theme-option" data-theme="forest" onclick="setTheme('forest')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #0d1117, #3fb950);"></div>
+                            <span class="theme-option-label">Forest</span>
+                        </div>
+                        <div class="theme-option" data-theme="sunset" onclick="setTheme('sunset')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #1a0f0a, #ff6b35);"></div>
+                            <span class="theme-option-label">Sunset</span>
+                        </div>
+                        <div class="theme-option" data-theme="minimal" onclick="setTheme('minimal')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #ffffff, #e0e0e0);"></div>
+                            <span class="theme-option-label">Minimal</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="lang-switch">
+                    <button class="lang-btn active" id="langEN" onclick="setLanguage('en')">EN</button>
+                    <button class="lang-btn" id="langZH" onclick="setLanguage('zh')">中文</button>
+                </div>
+                <button class="btn-text" onclick="openSyncModal()" data-i18n="sync">Sync</button>
+                <button class="btn-text" onclick="showTagsPage()" data-i18n="tags">Tags</button>
+                <button class="btn-text" onclick="openDataModal()" data-i18n="data">Data</button>
+            </div>
+        </header>
+
+        <!-- Quick Add -->
+        <div class="quick-add">
+            <form class="quick-add-form" id="quickAddForm">
+                <input type="text" id="quickAddInput" class="quick-add-input" placeholder="Add to inbox..." required data-i18n-placeholder="quickAddPlaceholder">
+                <button type="submit" class="btn-add" data-i18n="add">Add</button>
+            </form>
+        </div>
+
+        <!-- Layout -->
+        <div class="layout">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="nav-group">
+                    <div class="nav-group-label" data-i18n="collect">Collect</div>
+                    <a class="nav-item inbox active" data-category="inbox" onclick="switchCategory('inbox')">
+                        <div class="nav-item-left">
+                            <span class="nav-icon" id="icon-inbox">◻</span>
+                            <span data-i18n="inbox">Inbox</span>
+                        </div>
+                        <span class="nav-count" id="inboxCount">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-label" data-i18n="do">Do</div>
+                    <a class="nav-item next" data-category="next" onclick="switchCategory('next')">
+                        <div class="nav-item-left">
+                            <span class="nav-icon" id="icon-next">→</span>
+                            <span data-i18n="next">Next</span>
+                        </div>
+                        <span class="nav-count" id="nextCount">0</span>
+                    </a>
+                    <a class="nav-item project" data-category="project" onclick="switchCategory('project')">
+                        <div class="nav-item-left">
+                            <span class="nav-icon" id="icon-project">▧</span>
+                            <span data-i18n="projects">Projects</span>
+                        </div>
+                        <span class="nav-count" id="projectCount">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-label" data-i18n="defer">Defer</div>
+                    <a class="nav-item waiting" data-category="waiting" onclick="switchCategory('waiting')">
+                        <div class="nav-item-left">
+                            <span class="nav-icon" id="icon-waiting">◷</span>
+                            <span data-i18n="waiting">Waiting</span>
+                        </div>
+                        <span class="nav-count" id="waitingCount">0</span>
+                    </a>
+                    <a class="nav-item someday" data-category="someday" onclick="switchCategory('someday')">
+                        <div class="nav-item-left">
+                            <span class="nav-icon" id="icon-someday">◦</span>
+                            <span data-i18n="someday">Someday</span>
+                        </div>
+                        <span class="nav-count" id="somedayCount">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-label" data-i18n="completed">Completed</div>
+                    <a class="nav-item completed-nav" data-category="completed" onclick="switchCategory('completed')">
+                        <div class="nav-item-left">
+                            <span class="nav-icon" id="icon-completed">✓</span>
+                            <span data-i18n="completedList">Completed</span>
+                        </div>
+                        <span class="nav-count" id="completedCount">0</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Main -->
+            <main class="main">
+                <div class="content-header">
+                    <div class="content-title-group">
+                        <div class="content-title" id="contentTitle"><span data-i18n="inbox">Inbox</span></div>
+                        <div class="content-subtitle" id="contentSubtitle" data-i18n="captureEverything">Capture everything</div>
+                    </div>
+                    <div class="view-toggle" id="viewToggle">
+                        <button class="toggle-btn active" data-view="active" onclick="setView('active')" data-i18n="active">Active</button>
+                        <button class="toggle-btn" data-view="completed" onclick="setView('completed')" data-i18n="completed">Completed</button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search..." oninput="app.searchTasks(this.value)" data-i18n-placeholder="search">
+                    <button class="filter-btn active" data-context="" onclick="filterByContext('', this)" data-i18n="all">All</button>
+                    <button class="filter-btn" data-context="@office" onclick="filterByContext('@office', this)" data-i18n="office">Office</button>
+                    <button class="filter-btn" data-context="@home" onclick="filterByContext('@home', this)" data-i18n="home">Home</button>
+                    <button class="filter-btn" data-context="@computer" onclick="filterByContext('@computer', this)" data-i18n="computer">Computer</button>
+                    <button class="filter-btn" data-context="@phone" onclick="filterByContext('@phone', this)" data-i18n="phone">Phone</button>
+                    <button class="filter-btn" data-context="@errands" onclick="filterByContext('@errands', this)" data-i18n="errands">Errands</button>
+                </div>
+
+                <div class="task-list" id="taskList"></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle" data-i18n="addTask">Add Task</div>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <form id="taskForm">
+                <div class="modal-body">
+                    <input type="hidden" id="taskId">
+                    <input type="hidden" id="taskCategory" value="inbox">
+                    
+                    <div class="field">
+                        <div class="field-label" data-i18n="title">Title</div>
+                        <input type="text" id="taskTitle" class="field-input" required>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label" data-i18n="description">Description</div>
+                        <textarea id="taskDescription" class="field-input"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label" data-i18n="project">Project</div>
+                        <select id="taskProject" class="field-input">
+                            <option value="" data-i18n="none">None</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label" data-i18n="dueDate">Due Date</div>
+                        <input type="date" id="taskDueDate" class="field-input">
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label" data-i18n="context">Context</div>
+                        <select id="taskContext" class="field-input">
+                            <option value="" data-i18n="none">None</option>
+                            <option value="@office">@office</option>
+                            <option value="@home">@home</option>
+                            <option value="@computer">@computer</option>
+                            <option value="@phone">@phone</option>
+                            <option value="@errands">@errands</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label" data-i18n="tags">Tags</div>
+                        <div class="tags-input-container" id="tagsContainer">
+                            <input type="text" id="tagInput" placeholder="Type and press Enter" data-i18n-placeholder="typeEnter">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal()" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tags Modal -->
+    <div class="modal-overlay" id="tagsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="manageTags">Manage Tags</div>
+                <button class="modal-close" onclick="closeTagsModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="tags-grid" id="tagsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Modal -->
+    <div class="modal-overlay" id="syncModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="syncData">Sync Data</div>
+                <button class="modal-close" onclick="closeSyncModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="field">
+                    <div class="field-label" data-i18n="webdavServer">WebDAV Server</div>
+                    <input type="text" id="webdavUrl" class="field-input" placeholder="https://dav.example.com">
+                </div>
+
+                <div class="field">
+                    <div class="field-label" data-i18n="username">Username</div>
+                    <input type="text" id="webdavUser" class="field-input" placeholder="your_username">
+                </div>
+
+                <div class="field">
+                    <div class="field-label" data-i18n="password">Password</div>
+                    <input type="password" id="webdavPass" class="field-input" placeholder="your_password">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-ghost" onclick="testWebDAV()" style="flex: 1;" data-i18n="testConnection">Test Connection</button>
+                    <button class="btn btn-primary" onclick="saveWebDAVConfig()" style="flex: 1;" data-i18n="saveConfig">Save Config</button>
+                </div>
+
+                <div style="border-top: 1px solid var(--border); padding-top: 20px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn btn-primary" onclick="uploadToWebDAV()" style="flex: 1;" data-i18n="uploadData">Upload to Cloud</button>
+                        <button class="btn btn-ghost" onclick="downloadFromWebDAV()" style="flex: 1;" data-i18n="downloadData">Download from Cloud</button>
+                    </div>
+                    
+                    <div id="syncStatus" style="font-size: 11px; color: var(--text-dim); text-align: center;">
+                        <span data-i18n="lastSync">Last sync</span>: <span id="lastSyncTime" data-i18n="never">Never</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 12px; background: var(--surface-2); border-radius: 8px; font-size: 11px; color: var(--text-dim);">
+                    <strong data-i18n="syncTips">Tips:</strong>
+                    <ul style="margin: 8px 0 0 20px; line-height: 1.8;">
+                        <li data-i18n="tip1">Supports iCloud Drive, Nextcloud, Synology NAS</li>
+                        <li data-i18n="tip2">Data is encrypted locally before upload</li>
+                        <li data-i18n="tip3">Auto-resolve conflicts (latest wins)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Modal -->
+    <div class="modal-overlay" id="dataModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="data">Data</div>
+                <button class="modal-close" onclick="closeDataModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <div class="tag-card" onclick="exportData('json')">
+                        <span>↓</span><span data-i18n="exportJSON">Export JSON</span>
+                    </div>
+                    <div class="tag-card" onclick="exportData('csv')">
+                        <span>↓</span><span data-i18n="exportCSV">Export CSV</span>
+                    </div>
+                    <div class="tag-card" onclick="document.getElementById('importFile').click()">
+                        <span>↑</span><span data-i18n="import">Import</span>
+                    </div>
+                    <div class="tag-card" onclick="clearAllData()">
+                        <span>🗑</span><span data-i18n="clearAll">Clear All</span>
+                    </div>
+                </div>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(this)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-text" id="toastText">Done</div>
+    </div>
+
+    <script>
+        let currentCategory = 'inbox';
+        let currentLang = 'en';
+        let currentView = 'active';
+
+        // Icon sets for different themes
+        const iconSets = {
+            geometric: { inbox: '◻', next: '→', project: '▧', waiting: '◷', someday: '◦', completed: '✓' },
+            rounded: { inbox: '⬜', next: '➡', project: '📁', waiting: '⏳', someday: '💭', completed: '✅' },
+            organic: { inbox: '🍃', next: '🌱', project: '🌲', waiting: '🌙', someday: '⭐', completed: '🌿' },
+            soft: { inbox: '☁', next: '✨', project: '🔶', waiting: '🌅', someday: '🌙', completed: '☀' }
+        };
+
+        const i18n = {
+            en: {
+                tags: 'Tags', data: 'Data', quickAddPlaceholder: 'Add to inbox...', add: 'Add',
+                collect: 'Collect', inbox: 'Inbox', do: 'Do', next: 'Next', projects: 'Projects',
+                defer: 'Defer', waiting: 'Waiting', someday: 'Someday', completed: 'Completed',
+                completedList: 'Completed', captureEverything: 'Capture everything', active: 'Active',
+                search: 'Search...', all: 'All', office: 'Office', home: 'Home', computer: 'Computer',
+                phone: 'Phone', errands: 'Errands', addTask: 'Add Task', editTask: 'Edit Task',
+                title: 'Title', description: 'Description', project: 'Project', none: 'None',
+                dueDate: 'Due Date', context: 'Context', typeEnter: 'Type and press Enter',
+                cancel: 'Cancel', save: 'Save', exportJSON: 'Export JSON', exportCSV: 'Export CSV',
+                import: 'Import', clearAll: 'Clear All', manageTags: 'Manage Tags',
+                actionableNow: 'Actionable now', multiStepGoals: 'Multi-step goals',
+                pendingExternal: 'Pending external', forLater: 'For later',
+                completedTasks: 'Completed tasks', addAnything: 'Add anything on your mind',
+                moveActionable: 'Move actionable items here', multiStepDesc: 'Multi-step goals',
+                pendingResponses: 'Pending external responses', ideasForLater: 'Ideas for later',
+                noCompleted: 'No completed tasks yet', deleteTask: 'Delete this task?',
+                taskDeleted: 'Task deleted', taskCompleted: 'Completed', taskReopened: 'Reopened',
+                movedTo: 'Moved to', addedToInbox: 'Added to inbox', taskUpdated: 'Task updated',
+                taskCreated: 'Task created', exportedJSON: 'Exported JSON', exportedCSV: 'Exported CSV',
+                importedTasks: 'Imported', tasks: 'tasks', dataReplaced: 'Data replaced',
+                invalidJSON: 'Invalid JSON', importFailed: 'Import failed', allDataCleared: 'All data cleared',
+                confirmDelete: 'Delete all data? This cannot be undone.',
+                mergePrompt: 'tasks. Merge with existing? Cancel to replace all.',
+                found: 'Found', reopen: '↩ reopen', complete: '✓ complete', edit: 'edit',
+                delete: 'delete', moveTo: 'move to', noTags: 'No tags yet', tagTasks: 'tasks',
+                sync: 'Sync', syncData: 'Sync Data', webdavServer: 'WebDAV Server',
+                username: 'Username', password: 'Password', testConnection: 'Test Connection',
+                saveConfig: 'Save Config', uploadData: 'Upload to Cloud', downloadData: 'Download from Cloud',
+                lastSync: 'Last sync', never: 'Never', syncTips: 'Tips:',
+                tip1: 'Supports iCloud Drive, Nextcloud, Synology NAS',
+                tip2: 'Data is encrypted locally before upload',
+                tip3: 'Auto-resolve conflicts (latest wins)',
+                connectionSuccess: 'Connection successful!', connectionFailed: 'Connection failed',
+                configSaved: 'Config saved', uploadSuccess: 'Upload successful',
+                uploadFailed: 'Upload failed', downloadSuccess: 'Download successful',
+                downloadFailed: 'Download failed', noConfig: 'Please configure WebDAV first'
+            },
+            zh: {
+                tags: '标签', data: '数据', quickAddPlaceholder: '添加到收件箱...', add: '添加',
+                collect: '收集', inbox: '收件箱', do: '执行', next: '下一步', projects: '项目',
+                defer: '延后', waiting: '等待中', someday: '将来/也许', completed: '已完成',
+                completedList: '已完成', captureEverything: '记录所有想法', active: '进行中',
+                search: '搜索...', all: '全部', office: '办公室', home: '家', computer: '电脑',
+                phone: '电话', errands: '外出', addTask: '添加任务', editTask: '编辑任务',
+                title: '标题', description: '描述', project: '项目', none: '无',
+                dueDate: '截止日期', context: '情境', typeEnter: '输入后按回车',
+                cancel: '取消', save: '保存', exportJSON: '导出 JSON', exportCSV: '导出 CSV',
+                import: '导入', clearAll: '清空所有', manageTags: '管理标签',
+                sync: '同步', syncData: '数据同步', webdavServer: 'WebDAV 服务器',
+                username: '用户名', password: '密码', testConnection: '测试连接',
+                saveConfig: '保存配置', uploadData: '上传到云端', downloadData: '从云端下载',
+                lastSync: '最后同步', never: '从未', syncTips: '提示:',
+                tip1: '支持 iCloud Drive、Nextcloud、群晖 NAS',
+                tip2: '数据会在本地加密后上传',
+                tip3: '自动解决冲突 (最新获胜)',
+                connectionSuccess: '连接成功!', connectionFailed: '连接失败',
+                configSaved: '配置已保存', uploadSuccess: '上传成功',
+                uploadFailed: '上传失败', downloadSuccess: '下载成功',
+                downloadFailed: '下载失败', noConfig: '请先配置 WebDAV',
+                actionableNow: '当前可执行', multiStepGoals: '多步骤目标',
+                pendingExternal: '等待外部', forLater: '稍后处理',
+                completedTasks: '已完成任务', addAnything: '有任何想法都可以添加',
+                moveActionable: '将可执行任务移到这里', multiStepDesc: '多步骤目标',
+                pendingResponses: '等待他人回复', ideasForLater: '将来的想法',
+                noCompleted: '还没有已完成的任务', deleteTask: '确定要删除这个任务吗？',
+                taskDeleted: '任务已删除', taskCompleted: '已完成', taskReopened: '已重新打开',
+                movedTo: '已移动到', addedToInbox: '已添加到收件箱', taskUpdated: '任务已更新',
+                taskCreated: '任务已创建', exportedJSON: '已导出 JSON', exportedCSV: '已导出 CSV',
+                importedTasks: '导入了', tasks: '个任务', dataReplaced: '数据已替换',
+                invalidJSON: '无效的 JSON', importFailed: '导入失败', allDataCleared: '所有数据已清空',
+                confirmDelete: '确定要删除所有数据吗？此操作无法撤销。',
+                mergePrompt: '个任务。是否合并？取消则替换所有。',
+                found: '找到', reopen: '↩ 撤销', complete: '✓ 完成', edit: '编辑',
+                delete: '删除', moveTo: '移动到', noTags: '还没有标签', tagTasks: '个任务',
+                sync: '同步', syncData: '数据同步', webdavServer: 'WebDAV 服务器',
+                username: '用户名', password: '密码', testConnection: '测试连接',
+                saveConfig: '保存配置', uploadData: '上传到云端', downloadData: '从云端下载',
+                lastSync: '最后同步', never: '从未', syncTips: '提示:',
+                tip1: '支持 iCloud Drive、Nextcloud、群晖 NAS',
+                tip2: '数据会在本地加密后上传',
+                tip3: '自动解决冲突 (最新获胜)',
+                connectionSuccess: '连接成功!', connectionFailed: '连接失败',
+                configSaved: '配置已保存', uploadSuccess: '上传成功',
+                uploadFailed: '上传失败', downloadSuccess: '下载成功',
+                downloadFailed: '下载失败', noConfig: '请先配置 WebDAV'
+            }
+        };
+
+        function t(key) { return i18n[currentLang][key] || key; }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('gtd-lang', lang);
+            document.getElementById('langEN').classList.toggle('active', lang === 'en');
+            document.getElementById('langZH').classList.toggle('active', lang === 'zh');
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.textContent = i18n[lang][key];
+            });
+            
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[lang][key]) el.placeholder = i18n[lang][key];
+            });
+            
+            if (app) app.render();
+        }
+
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('gtd-theme', theme);
+            
+            // Update dropdown UI
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.theme === theme);
+            });
+            
+            // Update icons based on theme
+            const iconSet = iconSets[getComputedStyle(document.body).getPropertyValue('--icon-set').replace(/'/g, '').trim()] || iconSets.geometric;
+            document.getElementById('icon-inbox').textContent = iconSet.inbox;
+            document.getElementById('icon-next').textContent = iconSet.next;
+            document.getElementById('icon-project').textContent = iconSet.project;
+            document.getElementById('icon-waiting').textContent = iconSet.waiting;
+            document.getElementById('icon-someday').textContent = iconSet.someday;
+            document.getElementById('icon-completed').textContent = iconSet.completed;
+            
+            // Update theme color for PWA
+            const themeColors = {
+                midnight: '#0a0a0a',
+                dawn: '#ffffff',
+                forest: '#0d1117',
+                sunset: '#1a0f0a',
+                minimal: '#ffffff'
+            };
+            const themeColor = document.getElementById('themeColor');
+            if (themeColor) {
+                themeColor.setAttribute('content', themeColors[theme] || '#0a0a0a');
+            }
+            document.getElementById('icon-completed').textContent = iconSet.completed;
+            
+            // Close dropdown
+            document.getElementById('themeDropdown').classList.remove('show');
+        }
+
+        function toggleThemeDropdown() {
+            document.getElementById('themeDropdown').classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.theme-selector')) {
+                document.getElementById('themeDropdown').classList.remove('show');
+            }
+        });
+
+        class GTDApp {
+            constructor() {
+                this.tasks = [];
+                this.currentFilter = '';
+                this.currentSearch = '';
+                this.editTags = new Set();
+                this.init();
+            }
+
+            init() {
+                this.loadTasks();
+                const savedLang = localStorage.getItem('gtd-lang') || 'en';
+                setLanguage(savedLang);
+                const savedTheme = localStorage.getItem('gtd-theme') || 'midnight';
+                setTheme(savedTheme);
+                this.bindEvents();
+                this.render();
+            }
+
+            loadTasks() {
+                try {
+                    const saved = localStorage.getItem('gtd-tasks');
+                    this.tasks = saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    this.tasks = [];
+                }
+            }
+
+            saveTasks() {
+                try {
+                    localStorage.setItem('gtd-tasks', JSON.stringify(this.tasks));
+                    this.render();
+                } catch (e) {
+                    this.showToast('Failed to save');
+                }
+            }
+
+            bindEvents() {
+                const quickForm = document.getElementById('quickAddForm');
+                if (quickForm) {
+                    quickForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const input = document.getElementById('quickAddInput');
+                        const title = input.value.trim();
+                        if (title) {
+                            this.addTask({ title, category: 'inbox' });
+                            input.value = '';
+                            this.showToast(t('addedToInbox'));
+                        }
+                    });
+                }
+
+                const taskForm = document.getElementById('taskForm');
+                if (taskForm) {
+                    taskForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.saveTaskFromForm();
+                    });
+                }
+
+                document.getElementById('taskModal')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'taskModal') closeModal();
+                });
+                document.getElementById('dataModal')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'dataModal') closeDataModal();
+                });
+                document.getElementById('tagsModal')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'tagsModal') closeTagsModal();
+                });
+
+                const tagInput = document.getElementById('tagInput');
+                if (tagInput) {
+                    tagInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const tag = e.target.value.trim();
+                            if (tag) {
+                                this.editTags.add(tag);
+                                this.renderEditTags();
+                                e.target.value = '';
+                            }
+                        }
+                    });
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        closeModal(); closeDataModal(); closeTagsModal();
+                        document.getElementById('themeDropdown')?.classList.remove('show');
+                    }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        document.getElementById('searchInput')?.focus();
+                    }
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                        e.preventDefault();
+                        openTaskModal(currentCategory);
+                    }
+                });
+            }
+
+            addTask(task) {
+                const newTask = {
+                    id: Date.now().toString(),
+                    title: task.title,
+                    description: task.description || '',
+                    category: task.category || 'inbox',
+                    project: task.project || '',
+                    dueDate: task.dueDate || '',
+                    context: task.context || '',
+                    tags: task.tags || [],
+                    completed: false,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                this.tasks.unshift(newTask);
+                this.saveTasks();
+            }
+
+            updateTask(id, updates) {
+                const index = this.tasks.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    this.tasks[index] = { ...this.tasks[index], ...updates, updatedAt: new Date().toISOString() };
+                    this.saveTasks();
+                    return true;
+                }
+                return false;
+            }
+
+            deleteTask(id) {
+                if (confirm(t('deleteTask'))) {
+                    this.tasks = this.tasks.filter(t => t.id !== id);
+                    this.saveTasks();
+                    this.showToast(t('taskDeleted'));
+                }
+            }
+
+            toggleComplete(id) {
+                const task = this.tasks.find(t => t.id === id);
+                if (task) {
+                    task.completed = !task.completed;
+                    task.updatedAt = new Date().toISOString();
+                    this.saveTasks();
+                    this.showToast(task.completed ? t('taskCompleted') : t('taskReopened'));
+                }
+            }
+
+            moveTask(id, newCategory) {
+                this.updateTask(id, { category: newCategory });
+                this.showToast(t('movedTo') + ' ' + getCategoryName(newCategory));
+            }
+
+            getTasksByCategory(category) {
+                let tasks = this.tasks.filter(t => {
+                    if (category === 'completed') return t.completed;
+                    return t.category === category && !t.completed;
+                });
+
+                if (this.currentSearch) {
+                    const search = this.currentSearch.toLowerCase();
+                    tasks = tasks.filter(t => 
+                        t.title.toLowerCase().includes(search) ||
+                        t.description.toLowerCase().includes(search) ||
+                        t.tags.some(tag => tag.toLowerCase().includes(search))
+                    );
+                }
+
+                if (this.currentFilter && category !== 'completed') {
+                    tasks = tasks.filter(t => t.context === this.currentFilter);
+                }
+
+                return tasks;
+            }
+
+            searchTasks(query) {
+                this.currentSearch = query;
+                this.render();
+            }
+
+            render() {
+                this.renderCounts();
+                this.renderTaskList();
+                this.updateProjectDropdown();
+            }
+
+            renderCounts() {
+                const counts = {
+                    inbox: this.getTasksByCategory('inbox').length,
+                    next: this.getTasksByCategory('next').length,
+                    project: this.getTasksByCategory('project').length,
+                    waiting: this.getTasksByCategory('waiting').length,
+                    someday: this.getTasksByCategory('someday').length,
+                    completed: this.getTasksByCategory('completed').length
+                };
+
+                Object.keys(counts).forEach(key => {
+                    const el = document.getElementById(key + 'Count');
+                    if (el) el.textContent = counts[key];
+                });
+            }
+
+            renderTaskList() {
+                const tasks = this.getTasksByCategory(currentCategory);
+                const element = document.getElementById('taskList');
+                if (!element) return;
+
+                if (tasks.length === 0) {
+                    const emptyText = {
+                        inbox: t('addAnything'),
+                        next: t('moveActionable'),
+                        project: t('multiStepDesc'),
+                        waiting: t('pendingResponses'),
+                        someday: t('ideasForLater'),
+                        completed: t('noCompleted')
+                    }[currentCategory];
+
+                    element.innerHTML = `<div class="empty"><div class="empty-symbol">◦</div><div class="empty-text">${emptyText}</div></div>`;
+                    return;
+                }
+
+                element.innerHTML = tasks.map(task => this.renderTaskCard(task)).join('');
+            }
+
+            renderTaskCard(task) {
+                const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric'}) : '';
+                const context = task.context ? `<span class="tag">${task.context}</span>` : '';
+                const project = task.project ? `<span class="tag">▧ ${this.escapeHtml(task.project)}</span>` : '';
+                const date = dueDate ? `<span class="tag">📅 ${dueDate}</span>` : '';
+                const tags = task.tags.map(tag => `<span class="tag" onclick="filterByTag('${this.escapeHtml(tag)}')">#${this.escapeHtml(tag)}</span>`).join('');
+
+                return `
+                    <div class="task-item ${task.category} ${task.completed ? 'completed' : ''}">
+                        <div class="task-row">
+                            <div class="task-check ${task.completed ? 'checked' : ''}" onclick="app.toggleComplete('${task.id}')"></div>
+                            <div class="task-title">${this.escapeHtml(task.title)}</div>
+                        </div>
+                        ${task.description ? `<div class="task-desc">${this.escapeHtml(task.description)}</div>` : ''}
+                        <div class="task-meta">${date}${context}${project}${tags}</div>
+                        <div class="task-actions">
+                            <button class="action-btn" onclick="app.toggleComplete('${task.id}')">${task.completed ? t('reopen') : t('complete')}</button>
+                            <button class="action-btn" onclick="openTaskModal('${task.category}', '${task.id}')">${t('edit')}</button>
+                            ${this.renderMoveButtons(task)}
+                            <button class="action-btn danger" onclick="app.deleteTask('${task.id}')">${t('delete')}</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderMoveButtons(task) {
+                const categories = [
+                    { key: 'inbox', label: t('inbox') },
+                    { key: 'next', label: t('next') },
+                    { key: 'project', label: t('projects') },
+                    { key: 'waiting', label: t('waiting') },
+                    { key: 'someday', label: t('someday') }
+                ];
+                return categories.filter(cat => cat.key !== task.category)
+                    .map(cat => `<button class="action-btn" onclick="app.moveTask('${task.id}', '${cat.key}')">${t('moveTo')} ${cat.label}</button>`).join('');
+            }
+
+            updateProjectDropdown() {
+                const projects = this.tasks.filter(t => t.category === 'project' && !t.completed);
+                const select = document.getElementById('taskProject');
+                if (!select) return;
+                select.innerHTML = '<option value="">' + t('none') + '</option>' + 
+                    projects.map(p => `<option value="${this.escapeHtml(p.title)}">${this.escapeHtml(p.title)}</option>`).join('');
+            }
+
+            renderEditTags() {
+                const container = document.getElementById('tagsContainer');
+                if (!container) return;
+                const existing = Array.from(this.editTags).map(tag => 
+                    `<span class="tag-item">#${this.escapeHtml(tag)}<button type="button" onclick="app.removeEditTag('${this.escapeHtml(tag)}')">×</button></span>`
+                ).join('');
+                container.innerHTML = existing + `<input type="text" id="tagInput" placeholder="${t('typeEnter')}" style="flex:1;min-width:80px;border:none;background:transparent;color:var(--text);font-family:inherit;font-size:13px;">`;
+
+                const newInput = container.querySelector('input');
+                if (newInput) {
+                    newInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const tag = e.target.value.trim();
+                            if (tag) {
+                                this.editTags.add(tag);
+                                this.renderEditTags();
+                                e.target.value = '';
+                            }
+                        }
+                    });
+                }
+            }
+
+            removeEditTag(tag) {
+                this.editTags.delete(tag);
+                this.renderEditTags();
+            }
+
+            getAllTags() {
+                const tagMap = {};
+                this.tasks.forEach(task => {
+                    task.tags.forEach(tag => {
+                        tagMap[tag] = (tagMap[tag] || 0) + 1;
+                    });
+                });
+                return tagMap;
+            }
+
+            renderAllTags() {
+                const tagMap = this.getAllTags();
+                const grid = document.getElementById('tagsGrid');
+                if (!grid) return;
+                const tags = Object.entries(tagMap).sort((a, b) => b[1] - a[1]);
+
+                if (tags.length === 0) {
+                    grid.innerHTML = `<div class="empty"><div class="empty-text">${t('noTags')}</div></div>`;
+                    return;
+                }
+
+                grid.innerHTML = tags.map(([tag, count]) => 
+                    `<div class="tag-card" onclick="filterByTag('${this.escapeHtml(tag)}');closeTagsModal();">
+                        <span>#${this.escapeHtml(tag)}</span>
+                        <span class="tag-card-count">${count} ${t('tagTasks')}</span>
+                    </div>`
+                ).join('');
+            }
+
+            getTask(id) {
+                return this.tasks.find(t => t.id === id);
+            }
+
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            showToast(message) {
+                const toast = document.getElementById('toast');
+                const text = document.getElementById('toastText');
+                if (toast && text) {
+                    text.textContent = message;
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 2000);
+                }
+            }
+
+            exportData(format) {
+                if (format === 'json') {
+                    const blob = new Blob([JSON.stringify(this.tasks, null, 2)], { type: 'application/json' });
+                    this.downloadFile(blob, `gtd-backup-${new Date().toISOString().split('T')[0]}.json`);
+                    this.showToast(t('exportedJSON'));
+                } else if (format === 'csv') {
+                    const headers = ['ID', 'Title', 'Description', 'Category', 'Context', 'Project', 'DueDate', 'Tags', 'Status', 'CreatedAt'];
+                    const rows = this.tasks.map(t => [t.id, `"${t.title.replace(/"/g, '""')}"`, `"${t.description.replace(/"/g, '""')}"`, t.category, t.context, t.project, t.dueDate, `"${t.tags.join(';')}"`, t.completed ? 'completed' : 'active', t.createdAt]);
+                    const blob = new Blob([[headers.join(','), ...rows.map(r => r.join(','))].join('\n')], { type: 'text/csv' });
+                    this.downloadFile(blob, `gtd-export-${new Date().toISOString().split('T')[0]}.csv`);
+                    this.showToast(t('exportedCSV'));
+                }
+            }
+
+            downloadFile(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            importData(input) {
+                const file = input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (Array.isArray(imported)) {
+                            if (confirm(t('found') + ' ' + imported.length + ' ' + t('mergePrompt'))) {
+                                const existingIds = new Set(this.tasks.map(t => t.id));
+                                const newTasks = imported.filter(t => !existingIds.has(t.id));
+                                this.tasks = [...this.tasks, ...newTasks];
+                                this.saveTasks();
+                                this.showToast(t('importedTasks') + ' ' + newTasks.length + ' ' + t('tasks'));
+                            } else {
+                                this.tasks = imported;
+                                this.saveTasks();
+                                this.showToast(t('dataReplaced'));
+                            }
+                        } else {
+                            this.showToast(t('invalidJSON'));
+                        }
+                    } catch (err) {
+                        this.showToast(t('importFailed'));
+                    }
+                };
+                reader.readAsText(file);
+                input.value = '';
+            }
+
+            clearAllData() {
+                if (confirm(t('confirmDelete'))) {
+                    this.tasks = [];
+                    this.saveTasks();
+                    closeDataModal();
+                    this.showToast(t('allDataCleared'));
+                }
+            }
+
+            saveTaskFromForm() {
+                const taskId = document.getElementById('taskId').value;
+                const category = document.getElementById('taskCategory').value;
+
+                const taskData = {
+                    title: document.getElementById('taskTitle').value.trim(),
+                    description: document.getElementById('taskDescription').value.trim(),
+                    project: document.getElementById('taskProject').value,
+                    dueDate: document.getElementById('taskDueDate').value,
+                    context: document.getElementById('taskContext').value,
+                    tags: Array.from(this.editTags)
+                };
+
+                if (!taskData.title) {
+                    this.showToast('Title is required');
+                    return;
+                }
+
+                if (taskId) {
+                    const success = this.updateTask(taskId, taskData);
+                    if (success) this.showToast(t('taskUpdated'));
+                } else {
+                    taskData.category = category;
+                    this.addTask(taskData);
+                    this.showToast(t('taskCreated'));
+                }
+
+                closeModal();
+            }
+
+            // WebDAV Sync Functions
+            getWebDAVConfig() {
+                const config = localStorage.getItem('webdav-config');
+                return config ? JSON.parse(config) : null;
+            }
+
+            saveWebDAVConfig() {
+                const url = document.getElementById('webdavUrl').value.trim();
+                const user = document.getElementById('webdavUser').value.trim();
+                const pass = document.getElementById('webdavPass').value;
+
+                if (!url || !user || !pass) {
+                    this.showToast('Please fill all fields');
+                    return false;
+                }
+
+                const config = { url, user, pass };
+                localStorage.setItem('webdav-config', JSON.stringify(config));
+                this.showToast(t('configSaved'));
+                return true;
+            }
+
+            async testWebDAV() {
+                if (!this.saveWebDAVConfig()) return;
+
+                const config = this.getWebDAVConfig();
+                const auth = btoa(`${config.user}:${config.pass}`);
+
+                try {
+                    const response = await fetch(config.url, {
+                        method: 'PROPFIND',
+                        headers: {
+                            'Authorization': `Basic ${auth}`,
+                            'Content-Type': 'application/xml'
+                        },
+                        body: `<?xml version="1.0" encoding="utf-8"?>
+                        <D:propfind xmlns:D="DAV:">
+                            <D:prop><D:displayname/></D:prop>
+                        </D:propfind>`
+                    });
+
+                    if (response.ok || response.status === 207) {
+                        this.showToast(t('connectionSuccess'));
+                    } else if (response.status === 401) {
+                        this.showToast('Authentication failed (401) - Check username/password');
+                    } else if (response.status === 404) {
+                        this.showToast('Server not found (404) - Check server URL');
+                    } else if (response.status === 0) {
+                        this.showToast('Network error - Check connection or CORS');
+                    } else {
+                        this.showToast(t('connectionFailed') + ` (${response.status})`);
+                    }
+                } catch (e) {
+                    console.error('WebDAV test error:', e);
+                    let errorMsg = t('connectionFailed');
+                    if (e.message.includes('Failed to fetch')) {
+                        errorMsg = 'Network error: Cannot connect to server. Check URL and network.';
+                    }
+                    this.showToast(errorMsg);
+                }
+            }
+
+            async uploadToWebDAV() {
+                const config = this.getWebDAVConfig();
+                if (!config) {
+                    this.showToast(t('noConfig'));
+                    return;
+                }
+
+                const auth = btoa(`${config.user}:${config.pass}`);
+                const data = localStorage.getItem('gtd-tasks') || '[]';
+                const backup = {
+                    version: 1,
+                    timestamp: Date.now(),
+                    data: JSON.parse(data)
+                };
+
+                const uploadBtn = event?.target;
+                if (uploadBtn) {
+                    uploadBtn.disabled = true;
+                    uploadBtn.textContent = 'Uploading...';
+                }
+
+                try {
+                    const response = await fetch(`${config.url}/gtd-backup.json`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Basic ${auth}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(backup, null, 2)
+                    });
+
+                    if (response.ok) {
+                        localStorage.setItem('webdav-last-sync', Date.now().toString());
+                        this.updateSyncStatus();
+                        this.showToast(t('uploadSuccess'));
+                    } else if (response.status === 401) {
+                        this.showToast('Upload failed (401) - Authentication error');
+                    } else if (response.status === 403) {
+                        this.showToast('Upload failed (403) - Permission denied');
+                    } else {
+                        this.showToast(t('uploadFailed') + ` (${response.status})`);
+                    }
+                } catch (e) {
+                    console.error('WebDAV upload error:', e);
+                    this.showToast(t('uploadFailed') + ': ' + e.message);
+                } finally {
+                    if (uploadBtn) {
+                        uploadBtn.disabled = false;
+                        uploadBtn.textContent = t('uploadData');
+                    }
+                }
+            }
+
+            async downloadFromWebDAV() {
+                const config = this.getWebDAVConfig();
+                if (!config) {
+                    this.showToast(t('noConfig'));
+                    return;
+                }
+
+                const auth = btoa(`${config.user}:${config.pass}`);
+                
+                const downloadBtn = event?.target;
+                if (downloadBtn) {
+                    downloadBtn.disabled = true;
+                    downloadBtn.textContent = 'Downloading...';
+                }
+
+                try {
+                    const response = await fetch(`${config.url}/gtd-backup.json`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Basic ${auth}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const backup = await response.json();
+                        const localData = localStorage.getItem('gtd-tasks') || '[]';
+                        const localTime = JSON.parse(localData)?.updatedAt || 0;
+
+                        if (backup.timestamp > localTime) {
+                            if (confirm('发现更新的数据，是否覆盖本地数据？\n\nFound newer data, overwrite local data?')) {
+                                localStorage.setItem('gtd-tasks', JSON.stringify(backup.data));
+                                localStorage.setItem('webdav-last-sync', Date.now().toString());
+                                this.updateSyncStatus();
+                                app.loadTasks();
+                                app.render();
+                                this.showToast(t('downloadSuccess'));
+                            }
+                        } else {
+                            this.showToast('本地数据已是最新 | Local data is up to date');
+                        }
+                    } else if (response.status === 404) {
+                        this.showToast('No backup found on server (404) - Upload first');
+                    } else if (response.status === 401) {
+                        this.showToast('Download failed (401) - Authentication error');
+                    } else {
+                        this.showToast(t('downloadFailed') + ` (${response.status})`);
+                    }
+                } catch (e) {
+                    console.error('WebDAV download error:', e);
+                    this.showToast(t('downloadFailed') + ': ' + e.message);
+                } finally {
+                    if (downloadBtn) {
+                        downloadBtn.disabled = false;
+                        downloadBtn.textContent = t('downloadData');
+                    }
+                }
+            }
+
+            updateSyncStatus() {
+                const lastSync = localStorage.getItem('webdav-last-sync');
+                const el = document.getElementById('lastSyncTime');
+                if (el && lastSync) {
+                    const date = new Date(parseInt(lastSync));
+                    el.textContent = date.toLocaleString();
+                }
+            }
+        }
+
+        let app = null;
+
+        // Sync Modal Functions
+        function openSyncModal() {
+            const modal = document.getElementById('syncModal');
+            const config = app?.getWebDAVConfig();
+            
+            if (config) {
+                document.getElementById('webdavUrl').value = config.url;
+                document.getElementById('webdavUser').value = config.user;
+                document.getElementById('webdavPass').value = config.pass;
+            }
+            
+            app?.updateSyncStatus();
+            modal?.classList.add('active');
+        }
+
+        function closeSyncModal() {
+            document.getElementById('syncModal')?.classList.remove('active');
+        }
+
+        function saveWebDAVConfig() {
+            app?.saveWebDAVConfig();
+        }
+
+        function testWebDAV() {
+            app?.testWebDAV();
+        }
+
+        function uploadToWebDAV() {
+            app?.uploadToWebDAV();
+        }
+
+        function downloadFromWebDAV() {
+            app?.downloadFromWebDAV();
+        }
+
+        function switchCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            const activeItem = document.querySelector(`[data-category="${category}"]`);
+            if (activeItem) activeItem.classList.add('active');
+
+            const titles = {
+                inbox: t('inbox'), next: t('next'), project: t('projects'),
+                waiting: t('waiting'), someday: t('someday'), completed: t('completedList')
+            };
+
+            const subtitles = {
+                inbox: t('captureEverything'), next: t('actionableNow'),
+                project: t('multiStepGoals'), waiting: t('pendingExternal'),
+                someday: t('forLater'), completed: t('completedTasks')
+            };
+
+            document.getElementById('contentTitle').innerHTML = `<span>${titles[category]}</span>`;
+            document.getElementById('contentSubtitle').textContent = subtitles[category];
+            document.getElementById('viewToggle').style.display = category === 'completed' ? 'none' : 'flex';
+
+            app.render();
+        }
+
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === view);
+            });
+            app.render();
+        }
+
+        function filterByContext(context, btn) {
+            app.currentFilter = context;
+            document.querySelectorAll('.filter-btn').forEach(chip => chip.classList.remove('active'));
+            btn.classList.add('active');
+            app.render();
+        }
+
+        function filterByTag(tag) {
+            app.currentSearch = tag;
+            const input = document.getElementById('searchInput');
+            if (input) input.value = tag;
+            app.render();
+        }
+
+        function openTaskModal(category = 'inbox', taskId = null) {
+            const modal = document.getElementById('taskModal');
+            const form = document.getElementById('taskForm');
+            const title = document.getElementById('modalTitle');
+
+            if (!modal || !form) return;
+
+            form.reset();
+            app.editTags.clear();
+            app.renderEditTags();
+            document.getElementById('taskCategory').value = category;
+            document.getElementById('taskId').value = taskId || '';
+
+            if (taskId) {
+                const task = app.getTask(taskId);
+                if (task) {
+                    title.textContent = t('editTask');
+                    document.getElementById('taskTitle').value = task.title;
+                    document.getElementById('taskDescription').value = task.description;
+                    document.getElementById('taskProject').value = task.project;
+                    document.getElementById('taskDueDate').value = task.dueDate;
+                    document.getElementById('taskContext').value = task.context;
+                    task.tags.forEach(tag => app.editTags.add(tag));
+                    app.renderEditTags();
+                }
+            } else {
+                title.textContent = t('addTask');
+            }
+
+            modal.classList.add('active');
+            setTimeout(() => document.getElementById('taskTitle')?.focus(), 100);
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal')?.classList.remove('active');
+        }
+
+        function showTagsPage() {
+            app.renderAllTags();
+            document.getElementById('tagsModal')?.classList.add('active');
+        }
+
+        function closeTagsModal() {
+            document.getElementById('tagsModal')?.classList.remove('active');
+        }
+
+        function openDataModal() {
+            document.getElementById('dataModal')?.classList.add('active');
+        }
+
+        function closeDataModal() {
+            document.getElementById('dataModal')?.classList.remove('active');
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                inbox: currentLang === 'en' ? 'Inbox' : '收件箱',
+                next: currentLang === 'en' ? 'Next' : '下一步',
+                project: currentLang === 'en' ? 'Projects' : '项目',
+                waiting: currentLang === 'en' ? 'Waiting' : '等待中',
+                someday: currentLang === 'en' ? 'Someday' : '将来/也许'
+            };
+            return names[category] || category;
+        }
+
+        function exportData(format) { app.exportData(format); }
+        function importData(input) { app.importData(input); }
+        function clearAllData() { app.clearAllData(); }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('[PWA] SW registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('[PWA] SW registration failed:', error);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('[PWA] Install prompt available');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('[PWA] App installed');
+            deferredPrompt = null;
+        });
+
+        // Install PWA function
+        async function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('[PWA] User choice:', outcome);
+                deferredPrompt = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new GTDApp();
+        });
+    </script>
+</body>
+</html>
