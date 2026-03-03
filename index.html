@@ -2229,14 +2229,6 @@
             });
         }
 
-        // Install PWA function
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log('[PWA] Install prompt available');
-        });
-
         // PWA Install Prompt
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -2249,16 +2241,6 @@
             console.log('[PWA] App installed');
             deferredPrompt = null;
         });
-
-        // Install PWA function
-        async function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log('[PWA] User choice:', outcome);
-                deferredPrompt = null;
-            }
-        }
 
         // Initialize app when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
