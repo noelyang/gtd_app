@@ -15,8 +15,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* ========== THEME: Midnight (Default) ========== */
-        [data-theme="midnight"] {
+        /* ========== THEME: Dark (Default) ========== */
+        [data-theme="dark"] {
             --bg: #0a0a0a;
             --bg-gradient: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
             --surface: #141414;
@@ -30,11 +30,10 @@
             --primary: #00f0ff;
             --primary-rgb: 0, 240, 255;
             --glow: rgba(0, 240, 255, 0.3);
-            --icon-set: 'geometric';
         }
 
-        /* ========== THEME: Dawn (Light) - Optimized ========== */
-        [data-theme="dawn"] {
+        /* ========== THEME: Light ========== */
+        [data-theme="light"] {
             --bg: #f8f9fa;
             --bg-gradient: linear-gradient(180deg, #ffffff 0%, #e9ecef 100%);
             --surface: #ffffff;
@@ -48,61 +47,6 @@
             --primary: #1971c2;
             --primary-rgb: 25, 113, 194;
             --glow: rgba(34, 139, 230, 0.2);
-            --icon-set: 'rounded';
-        }
-
-        /* ========== THEME: Forest (Nature) ========== */
-        [data-theme="forest"] {
-            --bg: #0d1117;
-            --bg-gradient: linear-gradient(180deg, #0d1117 0%, #0a0f0d 100%);
-            --surface: #161b22;
-            --surface-2: #21262d;
-            --text: #e6edf3;
-            --text-dim: #7d8590;
-            --text-muted: #484f58;
-            --border: #30363d;
-            --accent: #3fb950;
-            --accent-rgb: 63, 185, 80;
-            --primary: #3fb950;
-            --primary-rgb: 63, 185, 80;
-            --glow: rgba(63, 185, 80, 0.3);
-            --icon-set: 'organic';
-        }
-
-        /* ========== THEME: Sunset (Warm) ========== */
-        [data-theme="sunset"] {
-            --bg: #1a0f0a;
-            --bg-gradient: linear-gradient(180deg, #1a0f0a 0%, #0f0a05 100%);
-            --surface: #2d1810;
-            --surface-2: #3d1f14;
-            --text: #ffe4d6;
-            --text-dim: #b8968c;
-            --text-muted: #7d5a50;
-            --border: #4a2f1f;
-            --accent: #ff8c42;
-            --accent-rgb: 255, 140, 66;
-            --primary: #ff6b35;
-            --primary-rgb: 255, 107, 53;
-            --glow: rgba(255, 107, 53, 0.3);
-            --icon-set: 'soft';
-        }
-
-        /* ========== THEME: Minimal (Ultra Clean) ========== */
-        [data-theme="minimal"] {
-            --bg: #ffffff;
-            --bg-gradient: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
-            --surface: #ffffff;
-            --surface-2: #fafafa;
-            --text: #000000;
-            --text-dim: #424242;
-            --text-muted: #757575;
-            --border: #e0e0e0;
-            --accent: #000000;
-            --accent-rgb: 0, 0, 0;
-            --primary: #424242;
-            --primary-rgb: 66, 66, 66;
-            --glow: rgba(0, 0, 0, 0.08);
-            --icon-set: 'geometric';
         }
 
         body {
@@ -881,7 +825,7 @@
         .hidden { display: none; }
     </style>
 </head>
-<body data-theme="midnight">
+<body data-theme="dark">
     <div class="app">
         <!-- Header -->
         <header class="header">
@@ -892,25 +836,13 @@
                         <span>🎨</span> Theme
                     </button>
                     <div class="theme-dropdown" id="themeDropdown">
-                        <div class="theme-option" data-theme="midnight" onclick="setTheme('midnight')">
-                            <div class="theme-preview" style="background: linear-gradient(135deg, #0a0a0a, #00f0ff);"></div>
-                            <span class="theme-option-label">Midnight</span>
+                        <div class="theme-option" data-theme="dark" onclick="setTheme('dark')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #0a0a0a, #1a1a1a);"></div>
+                            <span class="theme-option-label">Dark</span>
                         </div>
-                        <div class="theme-option" data-theme="dawn" onclick="setTheme('dawn')">
-                            <div class="theme-preview" style="background: linear-gradient(135deg, #ffffff, #0066ff);"></div>
-                            <span class="theme-option-label">Dawn</span>
-                        </div>
-                        <div class="theme-option" data-theme="forest" onclick="setTheme('forest')">
-                            <div class="theme-preview" style="background: linear-gradient(135deg, #0d1117, #3fb950);"></div>
-                            <span class="theme-option-label">Forest</span>
-                        </div>
-                        <div class="theme-option" data-theme="sunset" onclick="setTheme('sunset')">
-                            <div class="theme-preview" style="background: linear-gradient(135deg, #1a0f0a, #ff6b35);"></div>
-                            <span class="theme-option-label">Sunset</span>
-                        </div>
-                        <div class="theme-option" data-theme="minimal" onclick="setTheme('minimal')">
-                            <div class="theme-preview" style="background: linear-gradient(135deg, #ffffff, #e0e0e0);"></div>
-                            <span class="theme-option-label">Minimal</span>
+                        <div class="theme-option" data-theme="light" onclick="setTheme('light')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #ffffff, #f1f3f5);"></div>
+                            <span class="theme-option-label">Light</span>
                         </div>
                     </div>
                 </div>
@@ -940,7 +872,7 @@
                     <div class="nav-group-label" data-i18n="collect">Collect</div>
                     <a class="nav-item inbox active" data-category="inbox" onclick="switchCategory('inbox')">
                         <div class="nav-item-left">
-                            <span class="nav-icon" id="icon-inbox">◻</span>
+                            <span class="nav-icon" id="icon-inbox">📥</span>
                             <span data-i18n="inbox">Inbox</span>
                         </div>
                         <span class="nav-count" id="inboxCount">0</span>
@@ -951,14 +883,14 @@
                     <div class="nav-group-label" data-i18n="do">Do</div>
                     <a class="nav-item next" data-category="next" onclick="switchCategory('next')">
                         <div class="nav-item-left">
-                            <span class="nav-icon" id="icon-next">→</span>
+                            <span class="nav-icon" id="icon-next">👉</span>
                             <span data-i18n="next">Next</span>
                         </div>
                         <span class="nav-count" id="nextCount">0</span>
                     </a>
                     <a class="nav-item project" data-category="project" onclick="switchCategory('project')">
                         <div class="nav-item-left">
-                            <span class="nav-icon" id="icon-project">▧</span>
+                            <span class="nav-icon" id="icon-project">📁</span>
                             <span data-i18n="projects">Projects</span>
                         </div>
                         <span class="nav-count" id="projectCount">0</span>
@@ -969,14 +901,14 @@
                     <div class="nav-group-label" data-i18n="defer">Defer</div>
                     <a class="nav-item waiting" data-category="waiting" onclick="switchCategory('waiting')">
                         <div class="nav-item-left">
-                            <span class="nav-icon" id="icon-waiting">◷</span>
+                            <span class="nav-icon" id="icon-waiting">⏳</span>
                             <span data-i18n="waiting">Waiting</span>
                         </div>
                         <span class="nav-count" id="waitingCount">0</span>
                     </a>
                     <a class="nav-item someday" data-category="someday" onclick="switchCategory('someday')">
                         <div class="nav-item-left">
-                            <span class="nav-icon" id="icon-someday">◦</span>
+                            <span class="nav-icon" id="icon-someday">💭</span>
                             <span data-i18n="someday">Someday</span>
                         </div>
                         <span class="nav-count" id="somedayCount">0</span>
@@ -987,7 +919,7 @@
                     <div class="nav-group-label" data-i18n="completed">Completed</div>
                     <a class="nav-item completed-nav" data-category="completed" onclick="switchCategory('completed')">
                         <div class="nav-item-left">
-                            <span class="nav-icon" id="icon-completed">✓</span>
+                            <span class="nav-icon" id="icon-completed">✅</span>
                             <span data-i18n="completedList">Completed</span>
                         </div>
                         <span class="nav-count" id="completedCount">0</span>
@@ -1185,12 +1117,14 @@
         let currentLang = 'en';
         let currentView = 'active';
 
-        // Icon sets for different themes
-        const iconSets = {
-            geometric: { inbox: '◻', next: '→', project: '▧', waiting: '◷', someday: '◦', completed: '✓' },
-            rounded: { inbox: '⬜', next: '➡', project: '📁', waiting: '⏳', someday: '💭', completed: '✅' },
-            organic: { inbox: '🍃', next: '🌱', project: '🌲', waiting: '🌙', someday: '⭐', completed: '🌿' },
-            soft: { inbox: '☁', next: '✨', project: '🔶', waiting: '🌅', someday: '🌙', completed: '☀' }
+        // Flat monochrome emoji icons
+        const icons = {
+            inbox: '📥',
+            next: '👉',
+            project: '📁',
+            waiting: '⏳',
+            someday: '💭',
+            completed: '✅'
         };
 
         const i18n = {
@@ -1313,22 +1247,18 @@
                 opt.classList.toggle('active', opt.dataset.theme === theme);
             });
             
-            // Update icons based on theme
-            const iconSet = iconSets[getComputedStyle(document.body).getPropertyValue('--icon-set').replace(/'/g, '').trim()] || iconSets.geometric;
-            document.getElementById('icon-inbox').textContent = iconSet.inbox;
-            document.getElementById('icon-next').textContent = iconSet.next;
-            document.getElementById('icon-project').textContent = iconSet.project;
-            document.getElementById('icon-waiting').textContent = iconSet.waiting;
-            document.getElementById('icon-someday').textContent = iconSet.someday;
-            document.getElementById('icon-completed').textContent = iconSet.completed;
+            // Update icons (flat emoji style)
+            document.getElementById('icon-inbox').textContent = icons.inbox;
+            document.getElementById('icon-next').textContent = icons.next;
+            document.getElementById('icon-project').textContent = icons.project;
+            document.getElementById('icon-waiting').textContent = icons.waiting;
+            document.getElementById('icon-someday').textContent = icons.someday;
+            document.getElementById('icon-completed').textContent = icons.completed;
             
             // Update theme color for PWA
             const themeColors = {
-                midnight: '#0a0a0a',
-                dawn: '#ffffff',
-                forest: '#0d1117',
-                sunset: '#1a0f0a',
-                minimal: '#ffffff'
+                dark: '#0a0a0a',
+                light: '#ffffff'
             };
             const themeColor = document.getElementById('themeColor');
             if (themeColor) {
