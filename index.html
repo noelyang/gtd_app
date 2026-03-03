@@ -1457,18 +1457,39 @@
             }
 
             bindEvents() {
+                console.log('[GTD] Binding events...');
+                
                 const quickForm = document.getElementById('quickAddForm');
+                console.log('[GTD] quickAddForm element:', quickForm);
+                
                 if (quickForm) {
                     quickForm.addEventListener('submit', (e) => {
                         e.preventDefault();
+                        console.log('[GTD] Quick add form submitted');
+                        
                         const input = document.getElementById('quickAddInput');
+                        console.log('[GTD] Input element:', input);
+                        
+                        if (!input) {
+                            console.error('[GTD] Quick add input not found!');
+                            return;
+                        }
+                        
                         const title = input.value.trim();
+                        console.log('[GTD] Task title:', title);
+                        
                         if (title) {
                             this.addTask({ title, category: 'inbox' });
                             input.value = '';
+                            console.log('[GTD] Task added successfully');
                             this.showToast(t('addedToInbox'));
+                        } else {
+                            console.warn('[GTD] Empty title, not adding task');
                         }
                     });
+                    console.log('[GTD] Quick add form event bound');
+                } else {
+                    console.error('[GTD] Quick add form not found!');
                 }
 
                 const taskForm = document.getElementById('taskForm');
@@ -2239,12 +2260,15 @@
             }
         }
 
+        // Initialize app when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('[GTD] DOMContentLoaded - Initializing app...');
             app = new GTDApp();
+            console.log('[GTD] App initialized');
         });
     </script>
     
-    <!-- WebDAV Sync Module -->
+    <!-- WebDAV Sync Module (must load after main app) -->
     <script src="webdav-fix.js"></script>
 </body>
 </html>

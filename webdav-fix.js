@@ -338,11 +338,14 @@ const WebDAVUI = {
     }
 };
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => WebDAVUI.init());
-} else {
-    WebDAVUI.init();
-}
+// Initialize when DOM is ready (after main app)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('[WebDAV] DOMContentLoaded - Initializing WebDAV UI...');
+    // Wait a bit for main app to initialize
+    setTimeout(() => {
+        WebDAVUI.init();
+        console.log('[WebDAV] WebDAV UI initialized');
+    }, 100);
+});
 
 console.log('[WebDAV] Module loaded');
