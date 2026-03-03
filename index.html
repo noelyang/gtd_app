@@ -1191,14 +1191,14 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button class="btn btn-ghost" onclick="testWebDAV()" style="flex: 1;" data-i18n="testConnection">Test Connection</button>
-                    <button class="btn btn-primary" onclick="saveWebDAVConfig()" style="flex: 1;" data-i18n="saveConfig">Save Config</button>
+                    <button id="testWebDAVBtn" class="btn btn-ghost" style="flex: 1;" data-i18n="testConnection">Test Connection</button>
+                    <button id="saveWebDAVBtn" class="btn btn-primary" style="flex: 1;" data-i18n="saveConfig">Save Config</button>
                 </div>
 
                 <div style="border-top: 1px solid var(--border); padding-top: 20px;">
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <button class="btn btn-primary" onclick="uploadToWebDAV()" style="flex: 1;" data-i18n="uploadData">Upload to Cloud</button>
-                        <button class="btn btn-ghost" onclick="downloadFromWebDAV()" style="flex: 1;" data-i18n="downloadData">Download from Cloud</button>
+                        <button id="uploadWebDAVBtn" class="btn btn-primary" style="flex: 1;" data-i18n="uploadData">Upload to Cloud</button>
+                        <button id="downloadWebDAVBtn" class="btn btn-ghost" style="flex: 1;" data-i18n="downloadData">Download from Cloud</button>
                     </div>
                     
                     <div id="syncStatus" style="font-size: 11px; color: var(--text-dim); text-align: center;">
@@ -2208,6 +2208,14 @@
             });
         }
 
+        // Install PWA function
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('[PWA] Install prompt available');
+        });
+
         // PWA Install Prompt
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -2235,5 +2243,8 @@
             app = new GTDApp();
         });
     </script>
+    
+    <!-- WebDAV Sync Module -->
+    <script src="webdav-fix.js"></script>
 </body>
 </html>
